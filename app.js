@@ -2,70 +2,70 @@ document.querySelector(".next-btn").addEventListener("click", nextQuestion);
 document.querySelector(".prev-btn").addEventListener("click", previousQuestion);
 var questions = [
     {
-        question: "What Is Javascript",
+        question: "What Is Javascript ?",
         answers: [
-            { option: "Programming Languages", answer: true },
             { option: "Database", answer: false },
+            { option: "Programming Languages", answer: true }
         ]
     },
     {
-        question: "Which one was identifiers in Javascript",
+        question: "Which one was identifiers in Javascript ?",
         answers: [
-            { option: "@", answer: false },
-            { option: "$", answer: true }
+            { option: "$", answer: true },
+            { option: "@", answer: false }
         ]
     },
     {
-        question: "What is block",
+        question: "What is block ?",
         answers: [
             { option: "Everthing inside []", answer: false },
             { option: "Everthing inside {}", answer: true }
         ]
     },
     {
-        question: "Is let and const Block Scope",
+        question: "Is let and const Block Scope ?",
         answers: [
             { option: "Yes", answer: true },
             { option: "No", answer: false }
         ]
     },
     {
-        question: "Which Variable used before es6",
+        question: "Which Variable used before es6 ?",
         answers: [
             { option: "let", answer: false },
             { option: "var", answer: true }
         ]
     },
     {
-        question: "The external JavaScript file must contain the script tag",
+        question: "The external JavaScript file must contain the script tag ?",
         answers: [
-            { option: "True", answer: true },
-            { option: "False", answer: false }
+            { option: "False", answer: true },
+            { option: "True", answer: false }
         ]
     },
     {
-        question: "How do you write 'Hello World' in an alert box?",
+        question: "How do you write 'Hello World' in an alert box ?",
         answers: [
             { option: "alertbox('Hello world')", answer: false },
             { option: "alert('Hello world')", answer: true }
         ]
     },
     {
-        question: "How do you create a function in JavaScript?",
+        question: "How do you create a function in JavaScript ?",
         answers: [
             { option: "function myfunction()", answer: true },
             { option: "function = myfunction()", answer: false }
         ]
     },
     {
-        question: "How do you call a function named 'myFunction'?",
+        question: "How do you call a function named 'myFunction' ?",
         answers: [
             { option: "call myFunction()", answer: false },
             { option: "myFunction()", answer: true }
         ]
     },
     {
-        question: "How to write an IF statement in JavaScript?",
+        question: "How to write an IF statement in JavaScript ?",
         answers: [
             { option: "if(i==5)", answer: true },
             { option: "if i==5", answer: false }
@@ -136,7 +136,6 @@ function nextQuestion() {
 function previousQuestion() {
     if (currentQuestion > 0) {
         currentQuestion--;
-        score--;
         displayQuestion();
         const previousAnswer = selectedAnswer[currentQuestion];
         const radioButton = document.querySelectorAll('input[name="answer"]');
