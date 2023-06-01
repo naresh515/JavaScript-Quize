@@ -4,7 +4,8 @@ const start_btn = document.querySelector(".start-quiz");
 start_btn.onclick = () => {
     quiz_details.classList.add("activeInfo");
     start_btn.classList.add("invisable-btn");
-}
+    startTimer();
+};
 
 document.querySelector(".next-btn").addEventListener("click", nextQuestion);
 document.querySelector(".prev-btn").addEventListener("click", previousQuestion);
@@ -40,7 +41,7 @@ var questions = [
         question: "Is let and const Block Scope ?",
         answers: [
             { option: "No", answer: false },
-            { option: "Not SUre", answer: false },
+            { option: "Not Sure", answer: false },
             { option: "Yes", answer: true },
             { option: "Maybe", answer: false }
         ]
@@ -100,8 +101,28 @@ var questions = [
 
 let currentQuestion = 0;
 let score = 0;
-let selectedAnswer = []
+let selectedAnswer = [];
+let timeleft = 10;
+let timerInterval;
 
+function updateTimer() {
+    const timeElement = document.querySelector('.timer_sec')
+    timeElement.textContent = timeleft;
+}
+
+function startTimer() {
+    const timerElement = document.querySelector(".timer_sec");
+    timerElement.textContent = timeleft;
+    timerInterval = setInterval(() => {
+        if (timeleft === 0) {
+            clearInterval(timerInterval);
+            showResult();
+            return;
+        }
+        timeleft--;
+        timerElement.textContent = timeleft;
+    }, 1000);
+}
 
 function displayQuestion() {
     const quizElement = document.getElementById("quiz");
@@ -142,9 +163,13 @@ function disbaleButton() {
 }
 
 function nextQuestion() {
-    const selectedAnswerElement = document.querySelector('input[name="answer"]:checked');
+    const selectedAnswerElement = document.querySelector(
+        'input[name="answer"]:checked'
+    );
     if (selectedAnswerElement) {
         const selectedOption = selectedAnswerElement.value === 'true';
+        console.log(selectedOption
+        )
         selectedAnswer[currentQuestion] = selectedOption;
         if (selectedOption) {
             score++;
@@ -190,7 +215,8 @@ function showResult() {
     quizElement.innerHTML +=
         "<p>Your score: " + score + "/" + questions.length + "</p>";
     const prevButton = document.querySelector(".prev-btn");
-    const nextButton = document.querySelector(".next-btn")
+    const nextButton = document.querySelector(".next-btn");
+    nextButton.disabled = false;
     prevButton.disabled = true;
     nextButton.innerHTML = "Restart";
     nextButton.removeEventListener("click", nextQuestion);
