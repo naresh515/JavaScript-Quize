@@ -11,13 +11,22 @@
 
 <body>
     <div class="container">
-        <div class="heading">
-            <h1>Javascript Quiz</h1>
-        </div>
-        <div id="quiz"></div>
-        <div class="button-group">
-            <button type="button" class="prev-btn btn">Previous</button>
-            <button type="button" class="next-btn btn">Next</button>
+        <div class="start_btn"><button class="start-quiz">Start Quiz</button></div>
+        <div class="quiz-details">
+            <div class="heading">
+                <h1>Javascript Quiz</h1>
+                <div class="timer">
+                    <div class="time_left_txt">Time Left</div>
+                    <div class="timer_sec">15</div>
+                </div>
+            </div>
+            <hr>
+            <div class="time_line"></div>
+            <div id="quiz"></div>
+            <div class="button-group">
+                <button type="button" class="prev-btn btn">Previous</button>
+                <button type="button" class="next-btn btn">Next</button>
+            </div>
         </div>
     </div>
     <script src="./app.js"></script>

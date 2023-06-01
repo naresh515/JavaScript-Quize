@@ -13,12 +13,41 @@ body {
 
 .heading {
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.timer {
+    display: flex;
+    font-size: 20px;
+    align-items: center;
+    border: 1px solid;
+    padding: 0px 10px;
+    color: #004085;
+    background: #cce5ff;
+    border: 1px solid #b8daff;
+    height: 45px;
+    border-radius: 5px;
+}
+
+.timer_sec {
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
+    border-radius: 5px;
+    line-height: 30px;
+    text-align: center;
+    background: #343a40;
+    border: 1px solid #343a40;
+    padding: 0px 10px;
+    margin: 0px 0px 0px 10px;
 }
 
 h1 {
     text-align: center;
     margin: 0px;
-    font-size: 70px;
+    font-size: 50px;
     color: blue;
 }
 
@@ -70,7 +99,7 @@ button:disabled:hover {
 }
 
 label {
-    font-size: 30px;
+    font-size: 20px;
     width: 340px;
     display: inline-block;
     margin: 10px 0px;
@@ -79,13 +108,62 @@ label {
 }
 
 .checkbox {
-    height: 20px;
-    width: 20px;
+    height: 15px;
+    width: 15px;
     margin: 0 auto;
     cursor: pointer;
 }
 
 #quiz h2 {
-    font-size: 50px;
+    font-size: 25px;
     text-align: center;
+    margin: 30px 0px 20px;
+}
+
+.start_btn,
+.quiz-details {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+        0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.start_btn button {
+    font-size: 25px;
+    font-weight: 500;
+    color: #007bff;
+    padding: 15px 30px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    background: #fff;
+    cursor: pointer;
+}
+
+.quiz-details {
+    transform: translate(-50%, -50%) scale(0.9);
+    display: none;
+    padding: 30px 40px;
+    width: 550px;
+    max-width: 100%;
+}
+
+.activeInfo {
+    display: inline-block;
+    z-index: 5;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.invisable-btn {
+    display: none;
+}
+
+hr {
+    width: 100%;
+    overflow: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
 }

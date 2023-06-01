@@ -1,3 +1,11 @@
+const quiz_details = document.querySelector(".quiz-details");
+const start_btn = document.querySelector(".start-quiz");
+
+start_btn.onclick = () => {
+    quiz_details.classList.add("activeInfo");
+    start_btn.classList.add("invisable-btn");
+}
+
 document.querySelector(".next-btn").addEventListener("click", nextQuestion);
 document.querySelector(".prev-btn").addEventListener("click", previousQuestion);
 var questions = [
@@ -5,70 +13,87 @@ var questions = [
         question: "What Is Javascript ?",
         answers: [
             { option: "Database", answer: false },
-            { option: "Programming Languages", answer: true }
+            { option: "Programming Languages", answer: true },
+            { option: "DBMS", answer: false },
+            { option: "All Of This", answer: false }
         ]
     },
     {
         question: "Which one was identifiers in Javascript ?",
         answers: [
+            { option: "@", answer: false },
+            { option: "#", answer: false },
             { option: "$", answer: true },
-            { option: "@", answer: false }
+            { option: "*", answer: false }
         ]
     },
     {
         question: "What is block ?",
         answers: [
-            { option: "Everthing inside []", answer: false },
-            { option: "Everthing inside {}", answer: true }
+            { option: "Everything inside {}", answer: true },
+            { option: "Everything inside []", answer: false },
+            { option: "Everything Inside ()", answer: false },
+            { option: "Non Of This", answer: false }
         ]
     },
     {
         question: "Is let and const Block Scope ?",
         answers: [
+            { option: "No", answer: false },
+            { option: "Not SUre", answer: false },
             { option: "Yes", answer: true },
-            { option: "No", answer: false }
+            { option: "Maybe", answer: false }
         ]
     },
     {
         question: "Which Variable used before es6 ?",
         answers: [
             { option: "let", answer: false },
-            { option: "var", answer: true }
+            { option: "var", answer: true },
+            { option: "const", answer: false }
         ]
     },
     {
         question: "The external JavaScript file must contain the script tag ?",
         answers: [
-            { option: "False", answer: true },
-            { option: "True", answer: false }
+            { option: "No", answer: true },
+            { option: "Yes", answer: false },
         ]
     },
     {
         question: "How do you write 'Hello World' in an alert box ?",
         answers: [
+            { option: "alert('Hello world')", answer: true },
+            { option: "alert 'Hello World'", answer: false },
             { option: "alertbox('Hello world')", answer: false },
-            { option: "alert('Hello world')", answer: true }
+            { option: "alertbox 'Hello world'", answer: false }
         ]
     },
     {
         question: "How do you create a function in JavaScript ?",
         answers: [
             { option: "function myfunction()", answer: true },
-            { option: "function = myfunction()", answer: false }
+            { option: "function = myfunction()", answer: false },
+            { option: "function_myfunction()", answer: false },
+            { option: "function myfunctio", answer: false }
         ]
     },
     {
         question: "How do you call a function named 'myFunction' ?",
         answers: [
             { option: "call myFunction()", answer: false },
-            { option: "myFunction()", answer: true }
+            { option: "myFunction()", answer: true },
+            { option: "call call myfunction()", answer: false },
+            { option: "call myfunction", answer: false }
         ]
     },
     {
         question: "How to write an IF statement in JavaScript ?",
         answers: [
             { option: "if(i==5)", answer: true },
-            { option: "if i==5", answer: false }
+            { option: "if i==5", answer: false },
+            { option: "if = (i==5))", answer: false },
+            { option: "if = i==5", answer: false }
         ]
     }
 ]
@@ -140,7 +165,7 @@ function previousQuestion() {
         const previousAnswer = selectedAnswer[currentQuestion];
         const radioButton = document.querySelectorAll('input[name="answer"]');
         radioButton.forEach((radio) => {
-            if (radio.value === previousAnswer) {
+            if (radio.value === String(previousAnswer)) {
                 radio.checked = true;
             }
         });
@@ -150,14 +175,10 @@ function previousQuestion() {
 }
 
 function checkAnswer() {
-    const selectedAnswer = document.querySelector(
-        'input[name="answer"]:checked'
-    );
-    if (selectedAnswer) {
-        const answer = selectedAnswer.value === "true";
-        if (answer) {
-            score++;
-        }
+    const selectedAnswerElement = document.querySelector('input[name="answer"]:checked');
+    if (selectedAnswerElement) {
+        const selectedOption = selectedAnswerElement.value === 'true';
+        selectedAnswer[currentQuestion] = selectedOption;
         showResult();
     }
 }
