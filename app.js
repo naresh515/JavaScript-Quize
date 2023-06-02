@@ -1,15 +1,4 @@
-const quiz_details = document.querySelector(".quiz-details");
-const start_btn = document.querySelector(".start-quiz");
-
-start_btn.onclick = () => {
-    quiz_details.classList.add("activeInfo");
-    start_btn.classList.add("invisable-btn");
-    startTimer();
-};
-
-document.querySelector(".next-btn").addEventListener("click", nextQuestion);
-document.querySelector(".prev-btn").addEventListener("click", previousQuestion);
-var questions = [
+const questions = [
     {
         question: "What Is Javascript ?",
         answers: [
@@ -17,7 +6,8 @@ var questions = [
             { option: "Programming Languages", answer: true },
             { option: "DBMS", answer: false },
             { option: "All Of This", answer: false }
-        ]
+        ],
+        attempted: false,
     },
     {
         question: "Which one was identifiers in Javascript ?",
@@ -26,7 +16,8 @@ var questions = [
             { option: "#", answer: false },
             { option: "$", answer: true },
             { option: "*", answer: false }
-        ]
+        ],
+        attempted: false,
     },
     {
         question: "What is block ?",
@@ -35,7 +26,8 @@ var questions = [
             { option: "Everything inside []", answer: false },
             { option: "Everything Inside ()", answer: false },
             { option: "Non Of This", answer: false }
-        ]
+        ],
+        attempted: false,
     },
     {
         question: "Is let and const Block Scope ?",
@@ -44,7 +36,8 @@ var questions = [
             { option: "Not Sure", answer: false },
             { option: "Yes", answer: true },
             { option: "Maybe", answer: false }
-        ]
+        ],
+        attempted: false,
     },
     {
         question: "Which Variable used before es6 ?",
@@ -52,14 +45,16 @@ var questions = [
             { option: "let", answer: false },
             { option: "var", answer: true },
             { option: "const", answer: false }
-        ]
+        ],
+        attempted: false,
     },
     {
         question: "The external JavaScript file must contain the script tag ?",
         answers: [
             { option: "No", answer: true },
             { option: "Yes", answer: false },
-        ]
+        ],
+        attempted: false,
     },
     {
         question: "How do you write 'Hello World' in an alert box ?",
@@ -68,7 +63,8 @@ var questions = [
             { option: "alert 'Hello World'", answer: false },
             { option: "alertbox('Hello world')", answer: false },
             { option: "alertbox 'Hello world'", answer: false }
-        ]
+        ],
+        attempted: false,
     },
     {
         question: "How do you create a function in JavaScript ?",
@@ -77,7 +73,8 @@ var questions = [
             { option: "function = myfunction()", answer: false },
             { option: "function_myfunction()", answer: false },
             { option: "function myfunctio", answer: false }
-        ]
+        ],
+        attempted: false,
     },
     {
         question: "How do you call a function named 'myFunction' ?",
@@ -86,7 +83,8 @@ var questions = [
             { option: "myFunction()", answer: true },
             { option: "call call myfunction()", answer: false },
             { option: "call myfunction", answer: false }
-        ]
+        ],
+        attempted: false,
     },
     {
         question: "How to write an IF statement in JavaScript ?",
@@ -95,23 +93,27 @@ var questions = [
             { option: "if i==5", answer: false },
             { option: "if = (i==5))", answer: false },
             { option: "if = i==5", answer: false }
-        ]
+        ],
+        attempted: false,
     }
 ]
-
 let currentQuestion = 0;
 let score = 0;
 let selectedAnswer = [];
 let timeleft = 10;
 let timerInterval;
 
-function updateTimer() {
-    const timeElement = document.querySelector('.timer_sec')
-    timeElement.textContent = timeleft;
-}
 
-function startTimer() {
+const quiz_details = document.querySelector(".quiz-details");
+const start_btn = document.querySelector(".start-quiz");
+
+document.querySelector(".next-btn").addEventListener("click", nextQuestion);
+document.querySelector(".prev-btn").addEventListener("click", previousQuestion);
+
+start_btn.addEventListener("click", function () {
     const timerElement = document.querySelector(".timer_sec");
+    quiz_details.classList.add("activeInfo");
+    start_btn.classList.add("invisable-btn");
     timerElement.textContent = timeleft;
     timerInterval = setInterval(() => {
         if (timeleft === 0) {
@@ -122,7 +124,7 @@ function startTimer() {
         timeleft--;
         timerElement.textContent = timeleft;
     }, 1000);
-}
+});
 
 function displayQuestion() {
     const quizElement = document.getElementById("quiz");
@@ -153,13 +155,9 @@ function displayQuestion() {
     checkboxes.forEach((checkbox) => {
         checkbox.addEventListener('change', function () {
             nextButton.disabled = false;
+            questions[currentQuestion].attempted = true;
         })
     })
-}
-
-function disbaleButton() {
-    const nextButton = document.querySelector(".next-btn");
-    nextButton.disabled = true;
 }
 
 function nextQuestion() {
@@ -199,15 +197,6 @@ function previousQuestion() {
     }
 }
 
-function checkAnswer() {
-    const selectedAnswerElement = document.querySelector('input[name="answer"]:checked');
-    if (selectedAnswerElement) {
-        const selectedOption = selectedAnswerElement.value === 'true';
-        selectedAnswer[currentQuestion] = selectedOption;
-        showResult();
-    }
-}
-
 function showResult() {
     const quizElement = document.getElementById("quiz");
     quizElement.innerHTML = "";
@@ -225,8 +214,11 @@ function showResult() {
             answerElement.innerHTML =
                 '<input type="radio" disabled>' +
                 answer.option;
+
+            // const massageElement = document.createElement('span');
+            // massageElement.innerHTML = `You Didn't Attempt this Question`
             if (correctAnswer) {
-                if (answer.answer === true) {
+                if (userSelect === true && answer.answer === true) {
                     answerElement.style.color = "green";
                 } else {
                     answerElement.style.color = "red";
@@ -242,7 +234,6 @@ function showResult() {
     prevButton.disabled = true;
     nextButton.innerHTML = "Restart";
     nextButton.removeEventListener("click", nextQuestion);
-    nextButton.removeEventListener("click", checkAnswer);
     nextButton.addEventListener("click", () => {
         window.location.reload();
     });
