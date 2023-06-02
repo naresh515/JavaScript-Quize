@@ -215,11 +215,24 @@ function showResult() {
                 '<input type="radio" disabled>' +
                 answer.option;
 
-            // const massageElement = document.createElement('span');
-            // massageElement.innerHTML = `You Didn't Attempt this Question`
+            const massageElement = document.createElement('span');
+            massageElement.innerHTML = `You Didn't Attempt this Question`;
             if (correctAnswer) {
                 if (userSelect === true && answer.answer === true) {
                     answerElement.style.color = "green";
+                    answerElement.innerHTML =
+                        '<input type="radio" checked>' +
+                        answer.option;
+                } else if (answer.answer === true) {
+                    answerElement.style.color = "green";
+
+                } else if (userSelect === false) {
+                    answerElement.style.color = "red";
+                    if (userSelect === true && answer.answer === false) {
+                        answerElement.innerHTML =
+                            '<input type="radio" checked>' +
+                            answer.option;
+                    }
                 } else {
                     answerElement.style.color = "red";
                 }
