@@ -121,8 +121,7 @@ label {
     margin: 30px 0px 20px;
 }
 
-.start_btn,
-.quiz-details {
+.start_btn {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -144,17 +143,25 @@ label {
 }
 
 .quiz-details {
-    transform: translate(-50%, -50%) scale(0.9);
+    transform: none;
     display: none;
     padding: 30px 40px;
     width: 550px;
     max-width: 100%;
+    top: 0;
+    left: 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+        0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    position: absolute;
 }
 
 .activeInfo {
     display: inline-block;
     z-index: 5;
-    transform: translate(-50%, -50%) scale(1);
+    left: 0;
+    right: 0;
+    width: 550px;
+    margin: 0 auto;
 }
 
 .invisable-btn {

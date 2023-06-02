@@ -212,8 +212,30 @@ function showResult() {
     const quizElement = document.getElementById("quiz");
     quizElement.innerHTML = "";
     quizElement.innerHTML += "<h2>Quiz Completed</h2>";
-    quizElement.innerHTML +=
-        "<p>Your score: " + score + "/" + questions.length + "</p>";
+    quizElement.innerHTML += "<p>Your score: " + score + "/" + questions.length + "</p>";
+    for (let i = 0; i < questions.length; i++) {
+        const questionData = questions[i];
+        const userSelect = selectedAnswer[i];
+        const correctAnswer = questionData.answers.find(answer => answer.answer === true);
+        const questionElement = document.createElement('div');
+        questionElement.innerHTML = "<h3>" + questionData.question + "</h3>";
+        for (let j = 0; j < questionData.answers.length; j++) {
+            const answer = questionData.answers[j];
+            const answerElement = document.createElement('label');
+            answerElement.innerHTML =
+                '<input type="radio" disabled>' +
+                answer.option;
+            if (correctAnswer) {
+                if (answer.answer === true) {
+                    answerElement.style.color = "green";
+                } else {
+                    answerElement.style.color = "red";
+                }
+            }
+            questionElement.appendChild(answerElement);
+        }
+        quizElement.appendChild(questionElement);
+    }
     const prevButton = document.querySelector(".prev-btn");
     const nextButton = document.querySelector(".next-btn");
     nextButton.disabled = false;
@@ -221,11 +243,9 @@ function showResult() {
     nextButton.innerHTML = "Restart";
     nextButton.removeEventListener("click", nextQuestion);
     nextButton.removeEventListener("click", checkAnswer);
-    nextButton.addEventListener("click", complete);
-}
-
-function complete() {
-    window.location.reload();
+    nextButton.addEventListener("click", () => {
+        window.location.reload();
+    });
 }
 
 displayQuestion();
