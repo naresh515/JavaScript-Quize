@@ -227,11 +227,11 @@ function showTheFinalResult() {
     const resultContainer = document.querySelector('.result')
     let str = ''
     if (arrayOfQuestions) {
-        for (const question of arrayOfQuestions) {
+        for (const [index, question] of arrayOfQuestions.entries()) {
             const correctAnswer = question.answers.find(answer => answer.answer === true);
             str += `<div class="single-container">
             
-            <h2 class="single-question">${question.question}</h2><div class="options">`
+            <h2 class="single-question">Q.${index + 1} - ${question.question}</h2><div class="options">`
 
             for (let i = 0; i < question.answers.length; i++) {
 
@@ -241,7 +241,7 @@ function showTheFinalResult() {
             isUserCorrect = correctAnswer.answer == question?.answers[question?.attemptedIndex]?.answer
 
             console.log({ type: question?.attemptedIndex === undefined, index: question?.attemptedIndex, question })
-            str += `</div><div class="checkedResult">${question?.attemptedIndex === undefined ? '*Not Attempted' : (isUserCorrect ? "*Correct" : '*Wrong')}</div></div>`
+            str += `</div><div class="checkedResult">${question?.attemptedIndex === undefined ? '<span class = "msg notAttempt">*Not Attempted</span>' : (isUserCorrect ? '<span class = "msg correct">*Correct</span>' : '<span class = "msg wrong">*Wrong</span>')}</div></div>`
 
             resultContainer.innerHTML = str
         }

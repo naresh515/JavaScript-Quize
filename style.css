@@ -175,3 +175,20 @@ hr {
     left: 0;
     right: 0;
 }
+
+.msg {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.notAttempt {
+    color: orange;
+}
+
+.correct {
+    color: green;
+}
+
+.wrong {
+    color: red;
+}
