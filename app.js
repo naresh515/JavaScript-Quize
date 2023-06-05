@@ -211,19 +211,6 @@ function showResult() {
     quizElement.innerHTML = "";
     quizElement.innerHTML += "<h2>Quiz Completed</h2>";
     quizElement.innerHTML += "<p>Your score: " + score + "/" + questions.length + "</p>";
-    showTheFinalResult();
-    const prevButton = document.querySelector(".prev-btn");
-    const nextButton = document.querySelector(".next-btn");
-    nextButton.disabled = false;
-    prevButton.disabled = true;
-    nextButton.innerHTML = "Restart";
-    nextButton.removeEventListener("click", nextQuestion);
-    nextButton.addEventListener("click", () => {
-        window.location.reload();
-    });
-}
-
-function showTheFinalResult() {
     const resultContainer = document.querySelector('.result')
     let str = ''
     if (arrayOfQuestions) {
@@ -234,19 +221,24 @@ function showTheFinalResult() {
             <h2 class="single-question">Q.${index + 1} - ${question.question}</h2><div class="options">`
 
             for (let i = 0; i < question.answers.length; i++) {
-
-                str += `<label><input type="radio" ${question.attemptedIndex == i ? 'checked' : ''} value="${question.answers[i].option}"/>${question.answers[i].option}</label>`
+                str += `<label><input type="radio" disabled = true;  ${question.attemptedIndex == i ? 'checked' : ''} value="${question.answers[i].option}"/>${question.answers[i].option}</label>`
             }
 
             isUserCorrect = correctAnswer.answer == question?.answers[question?.attemptedIndex]?.answer
-
-            console.log({ type: question?.attemptedIndex === undefined, index: question?.attemptedIndex, question })
             str += `</div><div class="checkedResult">${question?.attemptedIndex === undefined ? '<span class = "msg notAttempt">*Not Attempted</span>' : (isUserCorrect ? '<span class = "msg correct">*Correct</span>' : '<span class = "msg wrong">*Wrong</span>')}</div></div>`
 
             resultContainer.innerHTML = str
         }
     }
-
+    const prevButton = document.querySelector(".prev-btn");
+    const nextButton = document.querySelector(".next-btn");
+    nextButton.disabled = false;
+    prevButton.disabled = true;
+    nextButton.innerHTML = "Restart";
+    nextButton.removeEventListener("click", nextQuestion);
+    nextButton.addEventListener("click", () => {
+        window.location.reload();
+    });
 }
 
 displayQuestion();

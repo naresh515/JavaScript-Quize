@@ -176,6 +176,10 @@ hr {
     right: 0;
 }
 
+.checkedResult {
+    margin: 10px 0px 20px;
+}
+
 .msg {
     font-size: 18px;
     font-weight: 600;
