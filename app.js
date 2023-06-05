@@ -102,6 +102,7 @@ let score = 0;
 let selectedAnswer = [];
 let timeleft = 10;
 let timerInterval;
+let arrayOfQuestions = []
 
 
 const quiz_details = document.querySelector(".quiz-details");
@@ -118,6 +119,7 @@ start_btn.addEventListener("click", function () {
     timerInterval = setInterval(() => {
         if (timeleft === 0) {
             clearInterval(timerInterval);
+            arrayOfQuestions = questions
             showResult();
             return;
         }
@@ -152,10 +154,11 @@ function displayQuestion() {
     }
 
     const checkboxes = document.querySelectorAll('.checkbox')
-    checkboxes.forEach((checkbox) => {
+    checkboxes.forEach((checkbox, index) => {
         checkbox.addEventListener('change', function () {
             nextButton.disabled = false;
             questions[currentQuestion].attempted = true;
+            questions[currentQuestion].attemptedIndex = index;
         })
     })
 }
@@ -166,8 +169,7 @@ function nextQuestion() {
     );
     if (selectedAnswerElement) {
         const selectedOption = selectedAnswerElement.value === 'true';
-        console.log(selectedOption
-        )
+        arrayOfQuestions[currentQuestion] = questions[currentQuestion]
         selectedAnswer[currentQuestion] = selectedOption;
         if (selectedOption) {
             score++;
@@ -202,43 +204,7 @@ function showResult() {
     quizElement.innerHTML = "";
     quizElement.innerHTML += "<h2>Quiz Completed</h2>";
     quizElement.innerHTML += "<p>Your score: " + score + "/" + questions.length + "</p>";
-    for (let i = 0; i < questions.length; i++) {
-        const questionData = questions[i];
-        const userSelect = selectedAnswer[i];
-        const correctAnswer = questionData.answers.find(answer => answer.answer === true);
-        const questionElement = document.createElement('div');
-        questionElement.innerHTML = "<h3>" + questionData.question + "</h3>";
-        for (let j = 0; j < questionData.answers.length; j++) {
-            const answer = questionData.answers[j];
-            const answerElement = document.createElement('label');
-            answerElement.innerHTML =
-                '<input type="radio" disabled>' +
-                answer.option;
-
-            // const massageElement = document.createElement('span');
-            // massageElement.innerHTML = `You Didn't Attempt this Question`;
-            if (correctAnswer) {
-                if (userSelect === true && answer.answer === true) {
-                    answerElement.style.color = "green";
-                    answerElement.innerHTML =
-                        '<input type="radio" checked>' +
-                        answer.option;
-                } else if (answer.answer === true) {
-                    answerElement.style.color = "green";
-
-                } else if (userSelect === false && answer.answer === false) {
-                    answerElement.style.color = "red";
-                    answerElement.innerHTML =
-                        '<input type="radio" checked>' +
-                        answer.option;
-                } else {
-                    answerElement.style.color = "red";
-                }
-            }
-            questionElement.appendChild(answerElement);
-        }
-        quizElement.appendChild(questionElement);
-    }
+    showTheFinalResult();
     const prevButton = document.querySelector(".prev-btn");
     const nextButton = document.querySelector(".next-btn");
     nextButton.disabled = false;
@@ -248,6 +214,30 @@ function showResult() {
     nextButton.addEventListener("click", () => {
         window.location.reload();
     });
+}
+
+function showTheFinalResult() {
+    const resultContainer = document.querySelector('.result')
+    let str = ''
+    if (arrayOfQuestions) {
+        for (const question of arrayOfQuestions) {
+            const correctAnswer = question.answers.find(answer => answer.answer === true);
+            str += `<div class="single-container">
+            
+            <h2 class="single-question">${question.question}</h2><div class="options">`
+
+            for (var i = 0; i < question.answers.length; i++) {
+
+                str += `<label><input type="radio" ${question.attemptedIndex == i ? 'checked' : ''} value="${question.answers[i].option}"/>${question.answers[i].option}</label>`
+            }
+
+            isUserCorrect = correctAnswer.answer == question?.answers[question?.attemptedIndex]?.answer
+            str += `</div><div class="checkedResult">${question?.attemptedIndex ? (isUserCorrect ? "*Correct" : '*Wrong') : '*Not Attempted'}</div></div>`
+
+            resultContainer.innerHTML = str
+        }
+    }
+
 }
 
 displayQuestion();
