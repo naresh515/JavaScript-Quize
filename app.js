@@ -100,7 +100,7 @@ const questions = [
 let currentQuestion = 0;
 let score = 0;
 let selectedAnswer = [];
-let timeleft = 10;
+let timeleft = 70;
 let timerInterval;
 let arrayOfQuestions = []
 
@@ -115,7 +115,7 @@ start_btn.addEventListener("click", function () {
     const timerElement = document.querySelector(".timer_sec");
     quiz_details.classList.add("activeInfo");
     start_btn.classList.add("invisable-btn");
-    timerElement.textContent = timeleft;
+    timerElement.textContent = timeConverter(timeleft);
     timerInterval = setInterval(() => {
         if (timeleft === 0) {
             clearInterval(timerInterval);
@@ -124,9 +124,15 @@ start_btn.addEventListener("click", function () {
             return;
         }
         timeleft--;
-        timerElement.textContent = timeleft;
+        timerElement.textContent = timeConverter(timeleft);
     }, 1000);
 });
+
+function timeConverter(num) {
+    var hours = Math.floor(num / 60);
+    var minutes = num % 60;
+    return hours + ":" + minutes.toString().padStart(2, "0");
+}
 
 function displayQuestion() {
     const quizElement = document.getElementById("quiz");
@@ -178,6 +184,7 @@ function nextQuestion() {
         if (currentQuestion < questions.length) {
             displayQuestion();
         } else {
+            clearInterval(timerInterval);
             showResult();
         }
     }
@@ -226,13 +233,15 @@ function showTheFinalResult() {
             
             <h2 class="single-question">${question.question}</h2><div class="options">`
 
-            for (var i = 0; i < question.answers.length; i++) {
+            for (let i = 0; i < question.answers.length; i++) {
 
                 str += `<label><input type="radio" ${question.attemptedIndex == i ? 'checked' : ''} value="${question.answers[i].option}"/>${question.answers[i].option}</label>`
             }
 
             isUserCorrect = correctAnswer.answer == question?.answers[question?.attemptedIndex]?.answer
-            str += `</div><div class="checkedResult">${question?.attemptedIndex ? (isUserCorrect ? "*Correct" : '*Wrong') : '*Not Attempted'}</div></div>`
+
+            console.log({ type: question?.attemptedIndex === undefined, index: question?.attemptedIndex, question })
+            str += `</div><div class="checkedResult">${question?.attemptedIndex === undefined ? '*Not Attempted' : (isUserCorrect ? "*Correct" : '*Wrong')}</div></div>`
 
             resultContainer.innerHTML = str
         }
