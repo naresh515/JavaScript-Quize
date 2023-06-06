@@ -197,6 +197,10 @@ hr {
     color: red;
 }
 
+.res-btn {
+    display: none;
+}
+
 @media screen and (min-width: 300px) and (max-width: 820px) {
     .start_btn button {
         font-size: 20px;
