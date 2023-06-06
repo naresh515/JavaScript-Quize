@@ -196,3 +196,46 @@ hr {
 .wrong {
     color: red;
 }
+
+@media screen and (min-width: 300px) and (max-width: 820px) {
+    .start_btn button {
+        font-size: 20px;
+    }
+
+    h1,
+    h2 {
+        font-size: 20px;
+    }
+
+    .activeInfo {
+        width: 90%;
+        padding: 10px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .timer_sec {
+        font-size: 15px;
+        width: 30px;
+    }
+
+    .timer {
+        font-size: 15px;
+    }
+
+    label,
+    .heading,
+    #quiz {
+        width: 100%;
+        max-width: 100%;
+        font-size: 16px;
+    }
+
+    .timer {
+        padding: 0px;
+    }
+
+    .msg {
+        font-size: 15px;
+    }
+}
