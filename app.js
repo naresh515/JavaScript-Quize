@@ -119,9 +119,44 @@ const questions = [
         attempted: false,
     }
 ]
-const newQestion = questions.map(displayQuestion)
 
-start_btn.addEventListener("click", function () {
+function getQuestionById(id) {
+    return questions.find(question => question.id === id);
+}
+
+function saveToLocalStorage() {
+    localStorage.setItem("currentQuestion", currentQuestion);
+    localStorage.setItem("selectedAnswer", JSON.stringify(selectedAnswer));
+    localStorage.setItem("timeLeft", timeleft);
+    localStorage.setItem("score", score);
+}
+
+function restoreFromLocalStorage() {
+    const savedQuestionIndex = localStorage.getItem("currentQuestion");
+    const savedSelectedAnswer = localStorage.getItem("selectedAnswer");
+    const savedTimeLeft = localStorage.getItem("timeLeft");
+    const savedScore = localStorage.getItem("score");
+    if (
+        savedQuestionIndex !== null &&
+        savedSelectedAnswer !== null &&
+        savedTimeLeft !== null &&
+        savedScore !== null
+    ) {
+        currentQuestion = parseInt(savedQuestionIndex);
+        selectedAnswer = JSON.parse(savedSelectedAnswer);
+        timeleft = parseInt(savedTimeLeft);
+        score = parseInt(savedScore);
+    }
+}
+
+function clearStorage() {
+    localStorage.removeItem("currentQuestion");
+    localStorage.removeItem("selectedAnswer");
+    localStorage.removeItem("timeLeft");
+    localStorage.removeItem("score");
+}
+
+start_btn.addEventListener("click", () => {
     const timerElement = document.querySelector(".timer_sec");
     quiz_details.classList.add("activeInfo");
     start_btn.classList.add("invisable-btn");
@@ -129,7 +164,8 @@ start_btn.addEventListener("click", function () {
     timerInterval = setInterval(() => {
         if (timeleft === 0) {
             clearInterval(timerInterval);
-            arrayOfQuestions = questions
+            arrayOfQuestions = questions;
+            saveToLocalStorage();
             showResult();
             return;
         }
@@ -144,31 +180,32 @@ function timeConverter(num) {
     return hours + ":" + minutes.toString().padStart(2, "0");
 }
 
-document.querySelector(".next-btn").addEventListener("click", () => {
-    const selectedAnswerElement = document.querySelector(
-        'input[name="answer"]:checked'
-    );
+nextButton.addEventListener("click", () => {
+    const selectedAnswerElement = document.querySelector('input[name="answer"]:checked');
     if (selectedAnswerElement) {
-        const selectedOption = selectedAnswerElement.value === 'true';
-        arrayOfQuestions[currentQuestion] = questions[currentQuestion]
+        const selectedOption = selectedAnswerElement.value === "true";
+        arrayOfQuestions[currentQuestion] = questions[currentQuestion];
         selectedAnswer[currentQuestion] = selectedOption;
         if (selectedOption) {
             score++;
         }
         currentQuestion++;
+        saveToLocalStorage();
         if (currentQuestion < questions.length) {
-            displayQuestion();
+            displayQuestion(questions[currentQuestion].id);
         } else {
             clearInterval(timerInterval);
+            clearStorage();
             showResult();
         }
     }
 });
 
-document.querySelector(".prev-btn").addEventListener("click", () => {
+prevButton.addEventListener("click", () => {
     if (currentQuestion > 0) {
         currentQuestion--;
-        displayQuestion();
+        saveToLocalStorage();
+        displayQuestion(questions[currentQuestion].id);
         const previousAnswer = selectedAnswer[currentQuestion];
         const radioButton = document.querySelectorAll('input[name="answer"]');
         radioButton.forEach((radio) => {
@@ -181,12 +218,14 @@ document.querySelector(".prev-btn").addEventListener("click", () => {
     }
 });
 
-function displayQuestion() {
+function displayQuestion(questionId) {
     const quizElement = document.getElementById("quiz");
-    const questionData = questions[currentQuestion];
+    const questionData = questionId ? getQuestionById(questionId) : questions[currentQuestion];
+    console.log(questionData);
     const previousAnswar = selectedAnswer[currentQuestion];
+    console.log(selectedAnswer);
     quizElement.innerHTML = "";
-    quizElement.innerHTML += "<h2>" + questionData.question + "</h2>";
+    quizElement.innerHTML += "<h2> Q." + (currentQuestion + 1) + questionData.question + "</h2>";
     for (let i = 0; i < questionData.answers.length; i++) {
         quizElement.innerHTML +=
             '<label><input type="radio" name="answer" class="checkbox" value="' +
@@ -221,6 +260,7 @@ function showResult() {
     quizElement.innerHTML += "<p>Your score: " + score + "/" + questions.length + "</p>";
     const resultContainer = document.querySelector('.result')
     let str = ''
+    clearStorage();
     if (arrayOfQuestions) {
         for (const [index, question] of arrayOfQuestions.entries()) {
             const correctAnswer = question.answers.find(answer => answer.answer === true);
@@ -241,9 +281,12 @@ function showResult() {
     nextButton.style.display = "none";
     prevButton.style.display = "none";
     resButton.style.display = "inline-block";
+    clearStorage();
     resButton.addEventListener("click", () => {
+        clearStorage();
         window.location.reload();
     });
 }
 
-displayQuestion();
+restoreFromLocalStorage();
+displayQuestion(questions[currentQuestion].id);
