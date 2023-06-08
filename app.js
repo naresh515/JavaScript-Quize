@@ -7,7 +7,7 @@ let resButton = document.querySelector(".res-btn")
 let questionContainer = document.querySelector("#quiz")
 let score = 0;
 let selectedAnswer = [];
-let timeleft = 40;
+let timeleft = 10;
 let timerInterval;
 let arrayOfQuestions = []
 let currentQuestion = {};
@@ -149,20 +149,15 @@ start_btn.addEventListener("click", () => {
 
     hideShowElement(start_btn, 'none')
     hideShowElement(quiz_details, 'block')
-
-    const timerElement = document.querySelector(".timer_sec");
-    timerElement.textContent = timeConverter(timeleft);
-    timerInterval = setInterval(() => {
-        if (timeleft === 0) {
-            clearInterval(timerInterval);
-            arrayOfQuestions = questions;
-            saveToLocalStorage();
-            showResult();
-            return;
-        }
-        timeleft--;
-        timerElement.textContent = timeConverter(timeleft);
-    }, 1000);
+    if (currentQuestionIndex === 0) {
+        hideShowElement(prevButton, 'none')
+    } else {
+        hideShowElement(prevButton, 'block')
+    }
+    if (localStorage.getItem("timeleft")) {
+        timeleft = parseInt(localStorage.getItem("timeleft"));
+    }
+    timer();
 });
 
 function timeConverter(num) {
@@ -188,14 +183,55 @@ questions.map((question, index) => {
 if (localStorage.getItem('started') === 'true') {
     const stateToUpdate = JSON.parse(localStorage.getItem('question'))
     const currentIndex = parseInt(localStorage.getItem("currentQuestionIndex"), 10)
+    const timeIndex = parseInt(localStorage.getItem("timeLeft"), 10)
+    const scoreIndex = parseInt(localStorage.getItem('score'), 10)
+
+    score = scoreIndex;
+    timeleft = timeIndex;
     if (currentQuestionIndex !== 0) {
         currentQuestionIndex = currentIndex;
         handleQuestionToggle(stateToUpdate);
     }
     hideShowElement(quiz_details, 'block')
+
+    if (currentQuestionIndex === 0) {
+        hideShowElement(prevButton, 'none')
+    } else {
+        hideShowElement(prevButton, 'block')
+    }
+    const selectedAnswerElement = document.querySelector('.checkbox:checked');
+    if (selectedAnswerElement) {
+        nextButton.disabled = false
+    }
+}
+
+function timer() {
+    const timerElement = document.querySelector(".timer_sec");
+    timerElement.textContent = timeConverter(timeleft);
+    timerInterval = setInterval(() => {
+        if (timeleft === 0) {
+            clearInterval(timerInterval);
+            arrayOfQuestions = questions;
+            showResult();
+            return;
+        }
+        timeleft--;
+        localStorage.setItem("timeleft", timeleft);
+        timerElement.textContent = timeConverter(timeleft);
+    }, 1000);
 }
 
 nextButton.addEventListener("click", () => {
+    nextButton.disabled = true;
+    const selectedAnswerElement = document.querySelector('.checkbox:checked')
+    if (selectedAnswerElement) {
+        const selectedOption = selectedAnswerElement.value === "true";
+        if (selectedOption) {
+            score++
+            localStorage.setItem('score', score);
+        }
+    }
+    localStorage.setItem("timeleft", timeleft);
     currentQuestionIndex += 1;
     const question = questions[currentQuestionIndex]
     if (currentQuestionIndex < questions.length - 1) {
@@ -209,22 +245,34 @@ nextButton.addEventListener("click", () => {
         hideShowElement(nextButton, 'none')
     }
     arrayOfQuestions[currentQuestionIndex] = questions[currentQuestionIndex];
-    console.log(arrayOfQuestions)
     handleQuestionToggle(question)
+});
+
+window.addEventListener("load", () => {
+    if (localStorage.getItem("timeleft")) {
+        timeleft = parseInt(localStorage.getItem("timeleft"));
+        timer();
+    }
 });
 
 prevButton.addEventListener("click", () => {
     currentQuestionIndex -= 1;
     const question = questions[currentQuestionIndex]
-    if (currentQuestionIndex > 0) {
-        hideShowElement(prevButton, 'block')
+    if (currentQuestionIndex >= 0) {
+        hideShowElement(prevButton, 'none')
         hideShowElement(submitButton, 'none')
     } else {
         hideShowElement(prevButton, 'none')
     }
     hideShowElement(nextButton, 'block')
-
+    localStorage.setItem("timeleft", timeleft);
     handleQuestionToggle(question)
+    if (currentQuestionIndex === 0) {
+        hideShowElement(prevButton, 'none')
+    } else {
+        hideShowElement(prevButton, 'block')
+    }
+    nextButton.disabled = false
 });
 
 submitButton.addEventListener("click", () => {
@@ -233,6 +281,7 @@ submitButton.addEventListener("click", () => {
 });
 
 function showResult() {
+    localStorage.clear();
     const quizElement = document.getElementById("quiz");
     quizElement.innerHTML = "";
     quizElement.innerHTML += "<h2>Quiz Completed</h2>";
@@ -277,4 +326,11 @@ function displayQuestion(question) {
         str += `</div></div>`
         questionContainer.innerHTML = str;
     }
+    nextButton.disabled = true;
+    const checkboxes = document.querySelectorAll('.checkbox')
+    checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener('change', function () {
+            nextButton.disabled = false;
+        })
+    })
 }
