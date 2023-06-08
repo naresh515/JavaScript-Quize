@@ -153,19 +153,7 @@ label {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
         0 6px 20px 0 rgba(0, 0, 0, 0.19);
     position: absolute;
-}
-
-.activeInfo {
-    display: inline-block;
-    z-index: 5;
-    left: 0;
-    right: 0;
-    width: 550px;
-    margin: 0 auto;
-}
-
-.invisable-btn {
-    display: none;
+    transform: translate(50%);
 }
 
 hr {
@@ -199,6 +187,18 @@ hr {
 
 .res-btn {
     display: none;
+}
+
+.single-container {
+    display: none;
+}
+
+.single-container.active {
+    display: block;
+}
+
+.single-container.results {
+    display: block;
 }
 
 @media screen and (min-width: 300px) and (max-width: 820px) {
