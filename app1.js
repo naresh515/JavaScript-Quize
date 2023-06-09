@@ -126,14 +126,13 @@ function getQuestionById(id) {
 
 start_btn.addEventListener("click", () => {
     const timerElement = document.querySelector(".timer_sec");
-    quiz_details.classList.add("activeInfo");
-    start_btn.classList.add("invisable-btn");
+    quiz_details.style.display = "block";
+    start_btn.style.display = "none";
     timerElement.textContent = timeConverter(timeleft);
     timerInterval = setInterval(() => {
         if (timeleft === 0) {
             clearInterval(timerInterval);
             arrayOfQuestions = questions;
-            saveToLocalStorage();
             showResult();
             return;
         }
@@ -158,12 +157,11 @@ nextButton.addEventListener("click", () => {
             score++;
         }
         currentQuestion++;
-        saveToLocalStorage();
         if (currentQuestion < questions.length) {
             displayQuestion(questions[currentQuestion].id);
         } else {
             clearInterval(timerInterval);
-            clearStorage();
+        
             showResult();
         }
     }
@@ -172,7 +170,6 @@ nextButton.addEventListener("click", () => {
 prevButton.addEventListener("click", () => {
     if (currentQuestion > 0) {
         currentQuestion--;
-        saveToLocalStorage();
         displayQuestion(questions[currentQuestion].id);
         const previousAnswer = selectedAnswer[currentQuestion];
         const radioButton = document.querySelectorAll('input[name="answer"]');
@@ -189,9 +186,7 @@ prevButton.addEventListener("click", () => {
 function displayQuestion(questionId) {
     const quizElement = document.getElementById("quiz");
     const questionData = questionId ? getQuestionById(questionId) : questions[currentQuestion];
-    console.log(questionData);
     const previousAnswar = selectedAnswer[currentQuestion];
-    console.log(selectedAnswer);
     quizElement.innerHTML = "";
     quizElement.innerHTML += "<h2> Q." + (currentQuestion + 1) + questionData.question + "</h2>";
     for (let i = 0; i < questionData.answers.length; i++) {
@@ -217,6 +212,8 @@ function displayQuestion(questionId) {
             nextButton.disabled = false;
             questions[currentQuestion].attempted = true;
             questions[currentQuestion].attemptedIndex = index;
+            console.log(questions[currentQuestion].attempted)
+            console.log( questions[currentQuestion].attemptedIndex)
         })
     })
 }
@@ -228,7 +225,7 @@ function showResult() {
     quizElement.innerHTML += "<p>Your score: " + score + "/" + questions.length + "</p>";
     const resultContainer = document.querySelector('.result')
     let str = ''
-    clearStorage();
+
     if (arrayOfQuestions) {
         for (const [index, question] of arrayOfQuestions.entries()) {
             const correctAnswer = question.answers.find(answer => answer.answer === true);
@@ -249,12 +246,11 @@ function showResult() {
     nextButton.style.display = "none";
     prevButton.style.display = "none";
     resButton.style.display = "inline-block";
-    clearStorage();
+
     resButton.addEventListener("click", () => {
-        clearStorage();
+    
         window.location.reload();
     });
 }
 
-restoreFromLocalStorage();
 displayQuestion(questions[currentQuestion].id);

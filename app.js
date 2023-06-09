@@ -7,12 +7,14 @@ let resButton = document.querySelector(".res-btn")
 let questionContainer = document.querySelector("#quiz")
 let score = 0;
 let selectedAnswer = [];
-let timeleft = 10;
+let selectedAnswerClone = [];
+let timeleft = 40;
 let timerInterval;
 let arrayOfQuestions = []
 let currentQuestion = {};
 let currentQuestionIndex = 0;
 let str = ''
+let answerStr = ''
 
 const questions = [
     {
@@ -221,16 +223,28 @@ function timer() {
     }, 1000);
 }
 
-nextButton.addEventListener("click", () => {
-    nextButton.disabled = true;
+function storeSelectedAnswer() {
+    const selectedAnswerElement = document.querySelector('.checkbox:checked');
+    if (selectedAnswerElement) {
+        const selectedOption = selectedAnswerElement.value === "true";
+        localStorage.setItem('selectedAnswer', selectedOption);
+    }
+}
+
+function commonNext() {
     const selectedAnswerElement = document.querySelector('.checkbox:checked')
     if (selectedAnswerElement) {
         const selectedOption = selectedAnswerElement.value === "true";
+        selectedAnswer[currentQuestionIndex] = selectedOption;
+        selectedAnswerClone[currentQuestionIndex] = selectedAnswerElement.getAttribute('data-value');
         if (selectedOption) {
             score++
             localStorage.setItem('score', score);
         }
+    } else {
+        selectedAnswer[currentQuestionIndex] = undefined;
     }
+    storeSelectedAnswer();
     localStorage.setItem("timeleft", timeleft);
     currentQuestionIndex += 1;
     const question = questions[currentQuestionIndex]
@@ -246,6 +260,11 @@ nextButton.addEventListener("click", () => {
     }
     arrayOfQuestions[currentQuestionIndex] = questions[currentQuestionIndex];
     handleQuestionToggle(question)
+}
+
+nextButton.addEventListener("click", () => {
+    nextButton.disabled = true;
+    commonNext();
 });
 
 window.addEventListener("load", () => {
@@ -276,40 +295,45 @@ prevButton.addEventListener("click", () => {
 });
 
 submitButton.addEventListener("click", () => {
+    commonNext();
     localStorage.clear()
     showResult();
 });
 
 function showResult() {
-    localStorage.clear();
+    clearInterval(timerInterval);
     const quizElement = document.getElementById("quiz");
     quizElement.innerHTML = "";
     quizElement.innerHTML += "<h2>Quiz Completed</h2>";
     quizElement.innerHTML += "<p>Your score: " + score + "/" + questions.length + "</p>";
-    const resultContainer = document.querySelector('.result')
-    let str = ''
-    if (arrayOfQuestions) {
-        for (const [index, question] of arrayOfQuestions.entries()) {
-            const correctAnswer = question.answers.find(answer => answer.answer === true);
-            str += `<div class="single-container results">
-            
-            <h2 class="single-question">Q.${index + 1} - ${question.question}</h2><div class="options">`
-
-            for (let i = 0; i < question.answers.length; i++) {
-                str += `<label><input type="radio" disabled = true;  ${question.attemptedIndex == i ? 'checked' : ''} value="${question.answers[i].option}"/>${question.answers[i].option}</label>`
-            }
-
-            isUserCorrect = correctAnswer.answer == question?.answers[question?.attemptedIndex]?.answer
-            str += `</div><div class="checkedResult">${question?.attemptedIndex === undefined ? '<span class = "msg notAttempt">*Not Attempted</span>' : (isUserCorrect ? '<span class = "msg correct">*Correct</span>' : '<span class = "msg wrong">*Wrong</span>')}</div></div>`
-
-            resultContainer.innerHTML = str
-        }
+    const resultContainer = document.querySelector('.result');
+    for (const [index, question] of questions.entries()) {
+        const correctAnswer = question.answers.find(answer => answer.answer === true);
+        const selected = selectedAnswer[index];
+        console.log()
+        const isUserCorrect = selected === correctAnswer.answer;
+        const answerStr = `<div class="single-container results">
+        <h2 class="single-question">Q.${index + 1} - ${question.question}</h2>
+        <div class="options">
+          ${question.answers.map((answer, i) =>
+            `<label>
+              <input type="radio" disabled ${selectedAnswerClone[index] == answer.option ? 'checked' : ''} value="${answer.option}"/>
+              ${answer.option}
+            </label>`
+        ).join('')}
+        </div>
+        <div class="checkedResult">
+          ${selected === undefined ? '<span class="msg notAttempt">*Not Attempted</span>' : (isUserCorrect ? '<span class="msg correct">*Correct</span>' : '<span class="msg wrong">*Wrong</span>')}
+        </div>
+      </div>`;
+        resultContainer.innerHTML += answerStr;
     }
-    nextButton.style.display = "none";
-    prevButton.style.display = "none";
-    submitButton.style.display = "none"
-    resButton.style.display = "inline-block";
+    hideShowElement(nextButton, "none");
+    hideShowElement(prevButton, "none");
+    hideShowElement(submitButton, "none");
+    hideShowElement(resButton, "block");
     resButton.addEventListener("click", () => {
+        localStorage.clear()
         window.location.reload();
     });
 }
@@ -321,16 +345,18 @@ function displayQuestion(question) {
         str += `<div data-id="${question.id}" class="single-container ${currentQuestion.id === question.id ? 'active' : 'tests'}">
             <h2 class="single-question">Q. ${question.id} - ${question.question}</h2><div class="options">`
         for (let i = 0; i < question.answers.length; i++) {
-            str += `<label><input type="radio" class = "checkbox"/>${question.answers[i].option}</label>`
+            str += `<label><input type="radio" name="answer" value="${question.answers[i].answer}" data-value="${question.answers[i].option}" class="checkbox"/>${question.answers[i].option}</label>`
         }
         str += `</div></div>`
         questionContainer.innerHTML = str;
     }
     nextButton.disabled = true;
     const checkboxes = document.querySelectorAll('.checkbox')
-    checkboxes.forEach((checkbox) => {
+    checkboxes.forEach((checkbox, index) => {
         checkbox.addEventListener('change', function () {
             nextButton.disabled = false;
+            currentQuestion.attempted = true;
+            currentQuestion.attemptedIndex = index;
         })
     })
 }
