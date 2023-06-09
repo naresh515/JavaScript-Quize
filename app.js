@@ -143,6 +143,11 @@ start_btn.addEventListener("click", () => {
     currentQuestionIndex = 0
     currentQuestion = questions[currentQuestionIndex]
 
+    const storedSelectedAnswer = localStorage.getItem("selectedAnswer");
+    if (storedSelectedAnswer) {
+        selectedAnswer[currentQuestionIndex] = storedSelectedAnswer === "true";
+    }
+
     localStorage.setItem("question", JSON.stringify(currentQuestion))
     localStorage.setItem("currentQuestionIndex", currentQuestionIndex)
 
@@ -232,34 +237,48 @@ function storeSelectedAnswer() {
 }
 
 function commonNext() {
-    const selectedAnswerElement = document.querySelector('.checkbox:checked')
+    const selectedAnswerElement = document.querySelector('.checkbox:checked');
     if (selectedAnswerElement) {
         const selectedOption = selectedAnswerElement.value === "true";
-        selectedAnswer[currentQuestionIndex] = selectedOption;
-        selectedAnswerClone[currentQuestionIndex] = selectedAnswerElement.getAttribute('data-value');
-        if (selectedOption) {
-            score++
-            localStorage.setItem('score', score);
+        const currentIndex = currentQuestionIndex;
+        if (selectedOption !== selectedAnswer[currentIndex]) {
+            selectedAnswer[currentIndex] = selectedOption;
+            if (selectedOption) {
+                score++;
+            } else {
+                score--;
+            }
         }
+        selectedAnswerClone[currentIndex] = selectedAnswerElement.getAttribute('data-value');
     } else {
         selectedAnswer[currentQuestionIndex] = undefined;
+        selectedAnswerClone[currentQuestionIndex] = undefined;
     }
     storeSelectedAnswer();
     localStorage.setItem("timeleft", timeleft);
     currentQuestionIndex += 1;
-    const question = questions[currentQuestionIndex]
+    const question = questions[currentQuestionIndex];
     if (currentQuestionIndex < questions.length - 1) {
-        localStorage.setItem("question", JSON.stringify(question))
-        localStorage.setItem("currentQuestionIndex", JSON.stringify(currentQuestionIndex))
+        localStorage.setItem("question", JSON.stringify(question));
+        localStorage.setItem("currentQuestionIndex", JSON.stringify(currentQuestionIndex));
         if (currentQuestionIndex !== 0) {
-            hideShowElement(prevButton, 'block')
+            hideShowElement(prevButton, 'block');
         }
     } else {
-        hideShowElement(submitButton, 'block')
-        hideShowElement(nextButton, 'none')
+        hideShowElement(submitButton, 'block');
+        hideShowElement(nextButton, 'none');
     }
     arrayOfQuestions[currentQuestionIndex] = questions[currentQuestionIndex];
-    handleQuestionToggle(question)
+    handleQuestionToggle(question);
+
+    const selectedAnswerIndex = selectedAnswer[currentQuestionIndex];
+    if (selectedAnswerIndex !== undefined) {
+        const selectedAnswerElement = document.querySelector(`.checkbox[data-value="${selectedAnswerIndex}"]`);
+        selectedAnswerElement.checked = true;
+        nextButton.disabled = false;
+    } else {
+        nextButton.disabled = true;
+    }
 }
 
 nextButton.addEventListener("click", () => {
@@ -275,23 +294,43 @@ window.addEventListener("load", () => {
 });
 
 prevButton.addEventListener("click", () => {
+    const selectedAnswerElement = document.querySelector('.checkbox:checked');
+    if (selectedAnswerElement) {
+        const selectedOption = selectedAnswerElement.value === "true";
+        const currentIndex = currentQuestionIndex;
+        if (selectedOption !== selectedAnswer[currentIndex]) {
+            selectedAnswer[currentIndex] = selectedOption;
+            if (selectedOption) {
+                score++;
+            } else {
+                score--;
+            }
+        }
+        selectedAnswerClone[currentIndex] = selectedAnswerElement.getAttribute('data-value');
+    } else {
+        selectedAnswer[currentQuestionIndex] = undefined;
+        selectedAnswerClone[currentQuestionIndex] = undefined;
+    }
+    storeSelectedAnswer();
     currentQuestionIndex -= 1;
-    const question = questions[currentQuestionIndex]
-    if (currentQuestionIndex >= 0) {
-        hideShowElement(prevButton, 'none')
-        hideShowElement(submitButton, 'none')
-    } else {
-        hideShowElement(prevButton, 'none')
-    }
-    hideShowElement(nextButton, 'block')
+    const question = questions[currentQuestionIndex];
+    hideShowElement(submitButton, 'none');
+    hideShowElement(nextButton, 'block');
     localStorage.setItem("timeleft", timeleft);
-    handleQuestionToggle(question)
+    handleQuestionToggle(question);
     if (currentQuestionIndex === 0) {
-        hideShowElement(prevButton, 'none')
+        hideShowElement(prevButton, 'none');
     } else {
-        hideShowElement(prevButton, 'block')
+        hideShowElement(prevButton, 'block');
     }
-    nextButton.disabled = false
+    const selectedAnswerIndex = selectedAnswer[currentQuestionIndex];
+    if (selectedAnswerIndex !== undefined) {
+        const selectedAnswerElement = document.querySelector(`.checkbox[data-value="${selectedAnswerIndex}"]`);
+        selectedAnswerElement.checked = true;
+        nextButton.disabled = false;
+    } else {
+        nextButton.disabled = true;
+    }
 });
 
 submitButton.addEventListener("click", () => {
@@ -302,6 +341,7 @@ submitButton.addEventListener("click", () => {
 
 function showResult() {
     clearInterval(timerInterval);
+    localStorage.clear()
     const quizElement = document.getElementById("quiz");
     quizElement.innerHTML = "";
     quizElement.innerHTML += "<h2>Quiz Completed</h2>";
