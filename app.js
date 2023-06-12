@@ -245,8 +245,6 @@ function commonNext() {
             selectedAnswer[currentIndex] = selectedOption;
             if (selectedOption) {
                 score++;
-            } else {
-                score--;
             }
         }
         selectedAnswerClone[currentIndex] = selectedAnswerElement.getAttribute('data-value');
