@@ -291,6 +291,18 @@ window.addEventListener("load", () => {
         timeleft = parseInt(localStorage.getItem("timeleft"));
         timer();
     }
+
+    for (i = 0; i > selectedAnswer.length; i++) {
+        console.log(selectedAnswer[i])
+    }
+    const selectedAnswerIndex = selectedAnswer[currentQuestionIndex];
+    if (selectedAnswerIndex !== undefined) {
+        const selectedAnswerElement = document.querySelector(`.checkbox[data-value="${selectedAnswerIndex}"]`);
+        selectedAnswerElement.checked = true;
+        nextButton.disabled = false;
+    } else {
+        nextButton.disabled = true;
+    }
 });
 
 prevButton.addEventListener("click", () => {
