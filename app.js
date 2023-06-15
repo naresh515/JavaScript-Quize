@@ -6,7 +6,6 @@ let submitButton = document.querySelector(".submit-btn");
 let resButton = document.querySelector(".res-btn")
 let questionContainer = document.querySelector("#quiz")
 let score = 0;
-let selectedAnswer = [];
 let selectedAnswerClone = [];
 let timeleft = 40;
 let timerInterval;
@@ -15,6 +14,8 @@ let currentQuestion = {};
 let currentQuestionIndex = 0;
 let str = ''
 let answerStr = ''
+let selectedAnswer = JSON.parse(localStorage.getItem("selectedAnswer")) || [];
+
 
 const questions = [
     {
@@ -139,7 +140,7 @@ function getQuestionById(id) {
     return questions.find(question => question.id === id);
 }
 
-start_btn.addEventListener("click", () => {
+start_btn.addEventListener("click", (event) => {
     currentQuestionIndex = 0
     currentQuestion = questions[currentQuestionIndex]
 
@@ -150,6 +151,7 @@ start_btn.addEventListener("click", () => {
 
     localStorage.setItem("question", JSON.stringify(currentQuestion))
     localStorage.setItem("currentQuestionIndex", currentQuestionIndex)
+    localStorage.setItem("score", JSON.stringify(score))
 
     localStorage.setItem('started', "true");
     handleQuestionToggle(questions[currentQuestionIndex])
@@ -232,7 +234,8 @@ function storeSelectedAnswer() {
     const selectedAnswerElement = document.querySelector('.checkbox:checked');
     if (selectedAnswerElement) {
         const selectedOption = selectedAnswerElement.value === "true";
-        localStorage.setItem('selectedAnswer', selectedOption);
+        selectedAnswer[currentQuestionIndex] = selectedOption;
+        localStorage.setItem("selectedAnswer", JSON.stringify(selectedAnswer));
     }
 }
 
@@ -241,10 +244,13 @@ function commonNext() {
     if (selectedAnswerElement) {
         const selectedOption = selectedAnswerElement.value === "true";
         const currentIndex = currentQuestionIndex;
-        if (selectedOption !== selectedAnswer[currentIndex]) {
+        selectedAnswer[currentQuestionIndex] = selectedOption;
+        localStorage.setItem("selectedAnswer", JSON.stringify(selectedAnswer));
+        if (selectedOption === selectedAnswer[currentIndex]) {
             selectedAnswer[currentIndex] = selectedOption;
             if (selectedOption) {
                 score++;
+                localStorage.setItem("score", score);
             }
         }
         selectedAnswerClone[currentIndex] = selectedAnswerElement.getAttribute('data-value');
@@ -282,6 +288,7 @@ function commonNext() {
 nextButton.addEventListener("click", () => {
     nextButton.disabled = true;
     commonNext();
+    storeSelectedAnswer();
 });
 
 window.addEventListener("load", () => {
