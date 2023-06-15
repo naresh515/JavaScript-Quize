@@ -140,7 +140,7 @@ function getQuestionById(id) {
     return questions.find(question => question.id === id);
 }
 
-start_btn.addEventListener("click", (event) => {
+start_btn.addEventListener("click", () => {
     currentQuestionIndex = 0
     currentQuestion = questions[currentQuestionIndex]
 
@@ -151,7 +151,6 @@ start_btn.addEventListener("click", (event) => {
 
     localStorage.setItem("question", JSON.stringify(currentQuestion))
     localStorage.setItem("currentQuestionIndex", currentQuestionIndex)
-    localStorage.setItem("score", JSON.stringify(score))
 
     localStorage.setItem('started', "true");
     handleQuestionToggle(questions[currentQuestionIndex])
@@ -233,7 +232,7 @@ function timer() {
 function storeSelectedAnswer() {
     const selectedAnswerElement = document.querySelector('.checkbox:checked');
     if (selectedAnswerElement) {
-        const selectedOption = parseInt(selectedAnswerElement.getAttribute('data-value'));
+        const selectedOption = selectedAnswerElement.value === "true";
         selectedAnswer[currentQuestionIndex] = selectedOption;
         localStorage.setItem("selectedAnswer", JSON.stringify(selectedAnswer));
     }
@@ -242,13 +241,11 @@ function storeSelectedAnswer() {
 function commonNext() {
     const selectedAnswerElement = document.querySelector('.checkbox:checked');
     if (selectedAnswerElement) {
-        const selectedOption = parseInt(selectedAnswerElement.getAttribute('data-value'));
+        const selectedOption = selectedAnswerElement.value === "true";
         const currentIndex = currentQuestionIndex;
-        selectedAnswer[currentQuestionIndex] = selectedOption;
-        localStorage.setItem("selectedAnswer", JSON.stringify(selectedAnswer));
-        if (selectedOption === selectedAnswer[currentIndex]) {
+        if (selectedOption !== selectedAnswer[currentIndex]) {
             selectedAnswer[currentIndex] = selectedOption;
-            if (selectedOption !== undefined) {
+            if (selectedOption) {
                 score++;
                 localStorage.setItem("score", score);
             }
@@ -288,7 +285,6 @@ function commonNext() {
 nextButton.addEventListener("click", () => {
     nextButton.disabled = true;
     commonNext();
-    storeSelectedAnswer();
 });
 
 window.addEventListener("load", () => {
@@ -296,7 +292,17 @@ window.addEventListener("load", () => {
         timeleft = parseInt(localStorage.getItem("timeleft"));
         timer();
     }
+
+    const selectedAnswerIndex = selectedAnswer[currentQuestionIndex];
+    if (selectedAnswerIndex !== undefined) {
+        const selectedAnswerElement = document.querySelector(`.checkbox[data-value="${selectedAnswerIndex}"]`);
+        selectedAnswerElement.checked = true;
+        nextButton.disabled = false;
+    } else {
+        nextButton.disabled = true;
+    }
 });
+
 
 prevButton.addEventListener("click", () => {
     const selectedAnswerElement = document.querySelector('.checkbox:checked');
@@ -390,8 +396,7 @@ function displayQuestion(question) {
         str += `<div data-id="${question.id}" class="single-container ${currentQuestion.id === question.id ? 'active' : 'tests'}">
             <h2 class="single-question">Q. ${question.id} - ${question.question}</h2><div class="options">`
         for (let i = 0; i < question.answers.length; i++) {
-            const isChecked = selectedAnswer[currentQuestionIndex] === i ? 'checked' : '';
-            str += `<label><input type="radio" name="answer" value="${question.answers[i].answer}" data-value="${i}" class="checkbox" ${isChecked}/>${question.answers[i].option}</label>`
+            str += `<label><input type="radio" name="answer" value="${question.answers[i].answer}" data-value="${question.answers[i].option}" class="checkbox"/>${question.answers[i].option}</label>`
         }
         str += `</div></div>`
         questionContainer.innerHTML = str;
