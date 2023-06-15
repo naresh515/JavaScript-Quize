@@ -151,6 +151,7 @@ start_btn.addEventListener("click", () => {
 
     localStorage.setItem("question", JSON.stringify(currentQuestion))
     localStorage.setItem("currentQuestionIndex", currentQuestionIndex)
+    localStorage.setItem("score", score)
 
     localStorage.setItem('started', "true");
     handleQuestionToggle(questions[currentQuestionIndex])
@@ -233,7 +234,7 @@ function storeSelectedAnswer() {
     const selectedAnswerElement = document.querySelector('.checkbox:checked');
     if (selectedAnswerElement) {
         const selectedOption = selectedAnswerElement.value === "true";
-        selectedAnswer[currentQuestionIndex] = questions[currentQuestionIndex];
+        selectedAnswer[currentQuestionIndex] = selectedOption;
         localStorage.setItem("selectedAnswer", JSON.stringify(selectedAnswer));
     }
 }
