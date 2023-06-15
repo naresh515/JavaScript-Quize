@@ -233,7 +233,7 @@ function storeSelectedAnswer() {
     const selectedAnswerElement = document.querySelector('.checkbox:checked');
     if (selectedAnswerElement) {
         const selectedOption = selectedAnswerElement.value === "true";
-        selectedAnswer[currentQuestionIndex] = questions[currentQuestionIndex];
+        selectedAnswer[currentQuestionIndex] = selectedOption;
         localStorage.setItem("selectedAnswer", JSON.stringify(selectedAnswer));
     }
 }
@@ -302,6 +302,7 @@ window.addEventListener("load", () => {
         nextButton.disabled = true;
     }
 });
+
 
 prevButton.addEventListener("click", () => {
     const selectedAnswerElement = document.querySelector('.checkbox:checked');
@@ -401,14 +402,12 @@ function displayQuestion(question) {
         questionContainer.innerHTML = str;
     }
     nextButton.disabled = true;
-}
-
-const checkboxes = document.querySelectorAll('.checkbox')
-checkboxes.forEach((checkbox, index) => {
-    console.log(index);
-    checkbox.addEventListener('change', function () {
-        nextButton.disabled = false;
-        currentQuestion.attempted = true;
-        currentQuestion.attemptedIndex = index;
+    const checkboxes = document.querySelectorAll('.checkbox')
+    checkboxes.forEach((checkbox, index) => {
+        checkbox.addEventListener('change', function () {
+            nextButton.disabled = false;
+            currentQuestion.attempted = true;
+            currentQuestion.attemptedIndex = index;
+        })
     })
-})
+}
