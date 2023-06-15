@@ -233,7 +233,7 @@ function timer() {
 function storeSelectedAnswer() {
     const selectedAnswerElement = document.querySelector('.checkbox:checked');
     if (selectedAnswerElement) {
-        const selectedOption = selectedAnswerElement.value === "true";
+        const selectedOption = parseInt(selectedAnswerElement.getAttribute('data-value'));
         selectedAnswer[currentQuestionIndex] = selectedOption;
         localStorage.setItem("selectedAnswer", JSON.stringify(selectedAnswer));
     }
@@ -242,13 +242,13 @@ function storeSelectedAnswer() {
 function commonNext() {
     const selectedAnswerElement = document.querySelector('.checkbox:checked');
     if (selectedAnswerElement) {
-        const selectedOption = selectedAnswerElement.value === "true";
+        const selectedOption = parseInt(selectedAnswerElement.getAttribute('data-value'));
         const currentIndex = currentQuestionIndex;
         selectedAnswer[currentQuestionIndex] = selectedOption;
         localStorage.setItem("selectedAnswer", JSON.stringify(selectedAnswer));
         if (selectedOption === selectedAnswer[currentIndex]) {
             selectedAnswer[currentIndex] = selectedOption;
-            if (selectedOption) {
+            if (selectedOption !== undefined) {
                 score++;
                 localStorage.setItem("score", score);
             }
@@ -390,7 +390,8 @@ function displayQuestion(question) {
         str += `<div data-id="${question.id}" class="single-container ${currentQuestion.id === question.id ? 'active' : 'tests'}">
             <h2 class="single-question">Q. ${question.id} - ${question.question}</h2><div class="options">`
         for (let i = 0; i < question.answers.length; i++) {
-            str += `<label><input type="radio" name="answer" value="${question.answers[i].answer}" data-value="${question.answers[i].option}" class="checkbox"/>${question.answers[i].option}</label>`
+            const isChecked = selectedAnswer[currentQuestionIndex] === i ? 'checked' : '';
+            str += `<label><input type="radio" name="answer" value="${question.answers[i].answer}" data-value="${i}" class="checkbox" ${isChecked}/>${question.answers[i].option}</label>`
         }
         str += `</div></div>`
         questionContainer.innerHTML = str;
