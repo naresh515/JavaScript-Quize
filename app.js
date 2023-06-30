@@ -5,6 +5,7 @@ let nextButton = document.querySelector(".next-btn");
 let submitButton = document.querySelector(".submit-btn");
 let resButton = document.querySelector(".res-btn")
 let questionContainer = document.querySelector("#quiz")
+let checkbox = document.querySelector(".checkbox")
 let score = 0;
 let selectedAnswerClone = [];
 let timeleft = 40;
@@ -166,6 +167,9 @@ start_btn.addEventListener("click", () => {
     if (localStorage.getItem("timeleft")) {
         timeleft = parseInt(localStorage.getItem("timeleft"));
     }
+    if (localStorage.getItem("checkbox")) {
+        checkbox = parseInt(localStorage.getItem("checkbox"));
+    }
     timer();
 });
 
@@ -194,6 +198,7 @@ if (localStorage.getItem('started') === 'true') {
     const currentIndex = parseInt(localStorage.getItem("currentQuestionIndex"), 10)
     const timeIndex = parseInt(localStorage.getItem("timeLeft"), 10)
     const scoreIndex = parseInt(localStorage.getItem('score'), 10)
+    const checkbox = parseInt(localStorage.getItem("checkbox"))
 
     score = scoreIndex;
     timeleft = timeIndex;
@@ -211,6 +216,7 @@ if (localStorage.getItem('started') === 'true') {
     const selectedAnswerElement = document.querySelector('.checkbox:checked');
     if (selectedAnswerElement) {
         nextButton.disabled = false
+        checkbox.checked = true
     }
 }
 
@@ -276,6 +282,7 @@ function commonNext() {
     const selectedAnswerIndex = selectedAnswer[currentQuestionIndex];
     if (selectedAnswerIndex !== undefined) {
         const selectedAnswerElement = document.querySelector(`.checkbox[data-value="${selectedAnswerIndex}"]`);
+        checkbox.checked = true;
         selectedAnswerElement.checked = true;
         nextButton.disabled = false;
     } else {
@@ -294,8 +301,14 @@ window.addEventListener("load", () => {
         timer();
     }
 
+    if (localStorage.getItem("checkbox")) {
+        checkbox = localStorage.getItem("checkbox");
+    }
+
     const selectedAnswerIndex = selectedAnswer[currentQuestionIndex];
     if (selectedAnswerIndex !== undefined) {
+        localStorage.setItem("checkbox", checkbox)
+        checkbox.checked = true;
         const selectedAnswerElement = document.querySelector(`.checkbox[data-value="${selectedAnswerIndex}"]`);
         selectedAnswerElement.checked = true;
         nextButton.disabled = false;
@@ -337,6 +350,7 @@ prevButton.addEventListener("click", () => {
     const selectedAnswerIndex = selectedAnswer[currentQuestionIndex];
     if (selectedAnswerIndex !== undefined) {
         const selectedAnswerElement = document.querySelector(`.checkbox[data-value="${selectedAnswerIndex}"]`);
+        checkbox.checked = true;
         selectedAnswerElement.checked = true;
         nextButton.disabled = false;
     } else {
@@ -406,10 +420,12 @@ function displayQuestion(question) {
 
 const checkboxes = document.querySelectorAll('.checkbox')
 checkboxes.forEach((checkbox, index) => {
-    console.log(index);
     checkbox.addEventListener('change', function () {
-        nextButton.disabled = false;
-        currentQuestion.attempted = true;
-        currentQuestion.attemptedIndex = index;
+        if (checkbox.checked) {
+            nextButton.disabled = false;
+            currentQuestion.attempted = true;
+            currentQuestion.attemptedIndex = index;
+            localStorage.setItem("selectedAnswer", JSON.stringify(index));
+        }
     })
 })
